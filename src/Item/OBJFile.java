@@ -31,9 +31,9 @@ public class OBJFile {
             }
         }
     }
-    public void getPart() throws IOException {
+    public String getPart(String defaultFile) throws IOException {
         Model model = new Model();
         model.parts = partList;
-        model.getModel();
+        return model.getModel(defaultFile);
     }
 }

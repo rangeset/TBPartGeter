@@ -9,7 +9,7 @@ public class Model {
     public LinkedList<Part> parts = new LinkedList<>();
     float[] position = new float[3];
     public Model() {}
-    public Model(int type) throws IOException {
+    public Model(String defaultFile) throws IOException {
         Scanner scanner = new Scanner(System.in);
         //System.out.println("请以x y z的形式输入结果Position值（旋转中心）默认为0 0 0");
         //String positionStr = scanner.nextLine();
@@ -21,10 +21,10 @@ public class Model {
         //} else {
         //    position = new float[]{0, 0, 0};
         //}
-        System.out.println("请将从TB中Copy出的内容粘贴至此，键入Q结束添加 或输入f并输入文件路径（如f C:\\User\\Download\\out.txt");
+        System.out.println("请将从TB中Copy出的内容粘贴至此，键入Q结束添加 或输入f并输入文件路径（如f C:\\User\\Download\\out.txt 回车默认读取本次运行中上次生成的文件（若没有则out.txt）");
         String line = scanner.nextLine();
         if (line.charAt(0) == 'f') {
-            File file = new File(line.split(" ")[1]);
+            File file = new File((line.split(" ").length > 1)?line.split(" ")[1]:defaultFile);
             BufferedReader br = new BufferedReader(new FileReader(file));
             String fileR;
             while ((fileR = br.readLine()) != null) {
@@ -138,20 +138,25 @@ public class Model {
                 }
         }
     }
-    public void getModel() throws IOException {
-        if (parts.size() < 500) {
+    public String getModel(String defaultFile) throws IOException {
+        if (parts.size() < 100) {
             for (Part part : parts) {
                 System.out.println(part.getPart());
             }
+            return defaultFile;
         } else {
-            File outFile = new File("out.txt");
+            System.out.println("期望输出文件名称（后缀.txt）（回车默认out.txt）");
+            Scanner scanner = new Scanner(System.in);
+            String path = scanner.nextLine();
+            File outFile = new File(path.isEmpty()?"out.txt":path);
             BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
             for (Part part: parts) {
                 bw.write(part.getPart() + " ");
                 bw.newLine();
             }
             bw.close();
-            System.out.println("打印了" + parts.size() + "行并存入了out.txt");
+            System.out.println("生成了" + parts.size() + "行并存入了" + (path.isEmpty()?"out.txt":path));
+            return path.isEmpty()?"out.txt":path;
         }
     }
 }
